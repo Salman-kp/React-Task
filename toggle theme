@@ -1,0 +1,16 @@
+import { useState } from 'react'
+import reactLogo from './assets/react.svg'
+import viteLogo from '/vite.svg'
+
+
+export default function App() {
+  const [theme, setTheam] = useState(false)
+
+  return (
+    <div style={{backgroundColor: theme ? 'black':'white',height:'100vh'}}>
+      <h1 style={{color: theme ? 'white':'black'}}>Change the Theme of the page</h1><br/>
+      <button onClick={()=>setTheam(!theme)}>Change Theme</button>   
+    </div>
+
+  )
+}
