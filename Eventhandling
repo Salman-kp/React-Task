@@ -1,0 +1,24 @@
+// Only used onChange and  onClik
+
+function App() {
+  const [text, setText] = useState(false)
+const [heading, setHeading] = useState('')
+function handilhead(event){
+  setHeading(event.target.value)
+}
+  return (
+    <div  >
+      <div style={{backgroundColor:text ? 'black':'white'}}>
+         <h1 style={{color:text ? 'white':'black'}}>Hi every one</h1>
+        <input type='text' placeholder="enter the text"
+        onChange={handilhead}></input>
+        <button onClick={()=> setText(!text)}>
+          clik
+        </button>
+      </div>
+       <h1>{heading}</h1>
+    </div>
+  )
+}
+
+export default App
