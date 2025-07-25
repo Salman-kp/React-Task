@@ -1,0 +1,132 @@
+import React from "react";
+import { Provider } from "react-redux";
+import store from "./Redux/store";
+import Counter from "./Counter";
+import User from "./User";
+
+function App() {
+  return (
+    <Provider store={store}>
+      <Counter />
+      <User/>
+    </Provider>
+  );
+}
+
+export default App;
+
+/*----------   Counter page    ------*/
+
+import React from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import './Counter.css';
+
+
+function Counter() {
+  const value = useSelector((state) => state.counter); 
+  const dispatch = useDispatch();
+
+  return (
+    <div className="di">
+      <button className="btn" onClick={() => dispatch({ type: 'increment' })}>
+        Increment
+      </button>
+      <p className="pf">{value.value}</p>
+      <button className="btn" onClick={() => dispatch({ type: 'decrement' })}>
+        Decrement
+      </button>
+    </div>
+  );
+}
+
+export default Counter;
+
+/*----------    user page   ------*/
+
+
+import React from "react";
+import { useDispatch, useSelector } from "react-redux";
+
+function User() {
+  const user = useSelector((state) => state.user);
+  const dispatch = useDispatch();
+
+  const handleShow = () => {
+    dispatch({ type: "SET_NAME", payload: "Salman" });
+  };
+
+  return (
+    <div style={{ backgroundColor: "black", color: "white", padding: "10px",marginTop:"40px" }}>
+      <h1>User Name</h1>
+      <p><strong>Name: {user.name}</strong></p> 
+      <button onClick={handleShow} style={{backgroundColor:"red",border:"none", borderRadius:"10px" , width:"140px",height:"40px"}}>Show the Name</button>
+    </div>
+  );
+}
+
+export default User;
+
+/*------------------------- Starting the  store part-----------*/
+
+/*----------   Store part    ------*/
+import { createStore } from 'redux'
+import rootReducer from './roote';
+
+const store = createStore(rootReducer);
+
+export default store
+
+/*---------- rootReducer      ------*/
+
+import { combineReducers } from "redux";
+import appReducer from "./counter";
+import userReducer from "./user";
+
+
+const rootReducer=combineReducers({
+    counter:appReducer,
+    user:userReducer,
+})
+export default rootReducer
+
+/*----------    counterreducer   ------*/
+
+const initialState = {
+  value: 0,
+};
+
+function appReducer(prevState = initialState, action) {
+  switch (action.type) {
+    case "increment":
+      return {
+        ...prevState,
+        value: prevState.value + 1,
+      };
+    case "decrement":
+      return {
+        ...prevState,
+        value: prevState.value - 1,
+      };
+    default:
+      return prevState;
+  }
+}
+export default appReducer
+
+/*----------  userReducer     ------*/
+const initialState={
+    name:''
+}
+const userReducer =(prevState=initialState,action)=>{
+    switch(action.type){
+     case "SET_NAME":
+        return{
+         ...prevState,
+         name:action.payload
+        }
+        default:
+            return prevState
+    }
+
+}
+export default userReducer
