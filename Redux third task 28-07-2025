@@ -1,0 +1,94 @@
+import React from "react";
+import { Provider } from "react-redux";
+import store from "./Redux/store";
+import Counter from "./Counter";
+import User from "./User";
+import Userid from "./Userid";
+
+function App() {
+  return (
+    <Provider store={store}>
+      <Counter />
+      <User/>
+      <Userid/>
+    </Provider>
+  );
+}
+
+export default App;
+
+/*------------------      UserDetails by id    -------------------*/
+import React, { useEffect } from 'react'
+import { useDispatch, useSelector } from 'react-redux';
+import { fetchUser } from './Redux/middleware/userAction';
+
+
+function Userid() {
+  const dispatch = useDispatch();
+  const { loading, data, error } = useSelector((state) => state.user);
+
+  useEffect(() => { dispatch(fetchUser(1)) }, [dispatch]);
+
+  return (
+    <div>
+      <h1>User Data</h1>
+      {loading && <p>Loading...</p>}
+      {error && <p style={{ color: 'red' }}>{error}</p>}
+      {data && (
+        <div>
+          <p>Name: {data.name}</p>
+          <p>Email: {data.email}</p>
+        </div>
+      )}
+    </div>
+  );
+}
+
+export default Userid;
+/*------------------      store    -------------------*/
+
+import { applyMiddleware, createStore,compose } from 'redux'
+import rootReducer from './roote';
+import { thunk } from 'redux-thunk';
+import testMiddleware from './middleware/testMiddleware';
+
+const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
+const store = createStore(
+    rootReducer,
+    composeEnhancers(applyMiddleware(thunk,testMiddleware)));
+
+export default store
+/*------------------    userAction      -------------------*/
+import axios from "axios";
+
+export const fetchUser = (userId) => {
+  return async (dispatch) => {
+    dispatch({ type: 'FETCH_USER_REQUEST' });
+    try {
+      const res = await axios.get(`https://jsonplaceholder.typicode.com/users/${userId}`);
+      dispatch({ type: 'FETCH_USER_SUCCESS', payload: res.data });
+    } catch (error) {
+      dispatch({ type: 'FETCH_USER_FAILURE', payload: error.message });
+    }
+  };
+};
+
+/*------------------     userReducer     -------------------*/
+const initialState = {
+  loading: false,
+  data: null,
+  error: null,
+};
+
+export const userReducer = (state = initialState, action) => {
+  switch (action.type) {
+    case 'FETCH_USER_REQUEST':
+      return { ...state, loading: true, error: null };
+    case 'FETCH_USER_SUCCESS':
+      return { loading: false, data: action.payload, error: null };
+    case 'FETCH_USER_FAILURE':
+      return { loading: false, data: null, error: action.payload };
+    default:
+      return state;
+  }
+};
